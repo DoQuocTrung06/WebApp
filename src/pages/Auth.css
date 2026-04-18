@@ -1,0 +1,182 @@
+/* src/pages/Auth.css */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6; /* Nền xám nhạt */
+  background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), 
+                    radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 40px;
+}
+
+.auth-logo {
+  background-color: #6366f1;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.auth-title {
+  font-weight: 800;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  color: #6b7280;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 30px;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.form-control-pro {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  transition: all 0.2s;
+}
+
+.form-control-pro:focus {
+  border-color: #6366f1;
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+.btn-auth {
+  background-color: #6366f1;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.btn-auth:hover {
+  background-color: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.auth-link {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* Thêm vào cuối file Auth.css */
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle-btn:hover {
+  color: #6366f1;
+}
+
+.input-password-pro {
+  padding-right: 40px; 
+}
+
+.btn-login-main {
+  background-color: #0866ff; /* Màu xanh đặc trưng */
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.05rem;
+  padding: 12px;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  transition: background-color 0.2s;
+}
+
+.btn-login-main:hover {
+  background-color: #005ce6;
+}
+
+.btn-forgot-pass {
+  background-color: #f0f2f5; /* Nền xám nhạt */
+  color: #1c1e21; /* Chữ xám đậm */
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px;
+  border: none;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.btn-forgot-pass:hover {
+  background-color: #e4e6e9;
+}
+
+.auth-divider {
+  border-bottom: 1px solid #dadde1;
+  margin: 20px 0;
+}
+
+.btn-create-account {
+  background-color: white;
+  color: #0866ff;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 12px;
+  border: 1px solid #0866ff;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.btn-create-account:hover {
+  background-color: #f0f5ff;
+}
