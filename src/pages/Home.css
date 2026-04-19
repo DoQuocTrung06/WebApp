@@ -21,6 +21,34 @@
   color: #202124 !important;
 }
 
+.app-container {
+  background-color: #ffffff;
+  color: #202124;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-container.dark {
+  background-color: #202124;
+  color: #e8eaed;
+}
+
+.dark input, 
+.dark textarea, 
+.dark .quick-create-box {
+  color: #e8eaed !important;
+}
+
+.dark input::placeholder, 
+.dark textarea::placeholder, 
+.dark .text-muted {
+  color: #9aa0a6 !important;
+}
+
+.dark .form-check-input:checked {
+  background-color: #8ab4f8; /* Màu xanh dương nhạt chuẩn Google */
+  border-color: #8ab4f8;
+}
+
 .dark .sidebar-item {
   color: #bdc1c6;
 }
@@ -82,6 +110,7 @@
   border-radius: 4px;
   transition: 0.2s;
   color: #5f6368;
+  cursor: pointer
 }
 
 .btn-light-hover:hover {
@@ -101,6 +130,49 @@
   border-color: #4285f4 !important;
 }
 
+
+/* --- LÀM ĐẸP MENU LỜI NHẮC --- */
+.custom-dropdown-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: 2px;
+  font-size: 0.95rem;
+}
+
+/* Hover chế độ sáng */
+.custom-dropdown-item:hover {
+  background-color: #f1f3f4;
+}
+
+/* Hover chế độ tối */
+.dark .custom-dropdown-item:hover {
+  background-color: #4a4d51; /* Màu xám sáng hơn nền một chút để dễ nhìn */
+}
+
+/* Fix icon lịch (calendar icon) màu trắng trong Dark Mode cho dễ thấy */
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.dark .custom-datetime-input {
+  background-color: transparent !important;
+  color: #e8eaed !important;
+  border: 1px solid #5f6368 !important;
+  color-scheme: dark; /* Phép màu ở đây: Ép cái lịch của Chrome/Edge chuyển sang Dark Mode */
+}
+
+.custom-datetime-input {
+  background-color: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.dark .btn-light-hover:hover {
+  background-color: rgba(255,255,255,0.1) !important;
+  color: #e8eaed !important;
+}
 .note-bg-default { background-color: #ffffff; border: 1px solid #e0e0e0; }
 .note-bg-red { background-color: #f28b82; }
 .note-bg-orange { background-color: #fbbc04; }
@@ -138,4 +210,25 @@
 .dark .note-bg-darkblue, .dark .note-bg-purple, .dark .note-bg-pink, 
 .dark .note-bg-brown, .dark .note-bg-gray {
   color: #e8eaed !important;
+}
+
+.rich-editor-content h1 {
+  font-size: 1.5rem !important; /* Khoảng 24px - Vừa vặn cho tiêu đề chính */
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-editor-content h2 {
+  font-size: 1.25rem !important; /* Khoảng 20px - Tiêu đề phụ */
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-editor-content h3 {
+  font-size: 1.1rem !important; /* Khoảng 17.6px - Nhỉnh hơn chữ thường một chút */
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }

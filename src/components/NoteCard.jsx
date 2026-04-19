@@ -1,8 +1,8 @@
 import React from 'react';
-import { MdOutlineDelete, MdPushPin } from "react-icons/md";
+import { MdOutlineDelete, MdPushPin, MdAccessTime } from "react-icons/md";
 
-function NoteCard({ note, onClick, onDelete }) {
-  // Xác định class màu nền, nếu không có thì mặc định là default
+function NoteCard({ note, onClick, onDelete, theme }) {
+  // Xác định class màu nền
   const bgClass = note.bgColor ? `note-bg-${note.bgColor}` : 'note-bg-default';
 
   return (
@@ -11,7 +11,7 @@ function NoteCard({ note, onClick, onDelete }) {
       onClick={onClick} 
       style={{ cursor: 'pointer', borderRadius: '16px', overflow: 'hidden' }}
     >
-      {/* 1. Hiển thị ảnh nếu có */}
+      {/* 1. HIỂN THỊ ẢNH BÌA */}
       {note.image && (
         <img 
           src={note.image} 
@@ -28,28 +28,36 @@ function NoteCard({ note, onClick, onDelete }) {
           {note.isPinned && <MdPushPin size={18} color="#6366f1" />}
         </div>
         
-        {/* 3. Nội dung (Chỉ Render 1 lần duy nhất) */}
+        {/* 3. Nội dung (ĐÃ SỬA LỖI MÀU CHỮ TRONG DARK MODE) */}
         <div 
-          className="text-muted" 
+          className="opacity-75" // Dùng opacity thay cho text-muted để nó tự chuyển đổi màu theo nền
           style={{ 
             fontSize: '0.9rem', 
             lineHeight: '1.5', 
             display: '-webkit-box', 
-            WebkitLineClamp: '6', // Giới hạn tối đa 6 dòng cho gọn
+            WebkitLineClamp: '6', 
             WebkitBoxOrient: 'vertical', 
             overflow: 'hidden' 
           }}
           dangerouslySetInnerHTML={{ __html: note.content }}
         />
+
+        {/* HIỂN THỊ LỜI NHẮC TRÊN THẺ */}
+        {note.reminder && (
+          <div className="badge rounded-pill bg-dark bg-opacity-10 text-dark border border-secondary mt-3 d-inline-flex align-items-center gap-1" style={{ padding: '4px 8px', fontSize: '0.75rem' }}>
+            <MdAccessTime size={12} /> 
+            {new Date(note.reminder).toLocaleDateString('vi-VN')}
+          </div>
+        )}
       </div>
 
-      {/* 4. Nút xóa ở góc dưới bên phải */}
+      {/* 4. Nút xóa */}
       <div className="position-absolute" style={{ bottom: '12px', right: '12px' }}>
         <button 
-          className="btn btn-sm rounded-circle shadow-none text-muted p-2"
-          style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
+          className={`btn btn-sm rounded-circle shadow-none p-2 ${theme === 'dark' ? 'text-light' : 'text-dark'}`}
+          style={{ backgroundColor: 'rgba(128,128,128,0.1)' }}
           onClick={(e) => { 
-            e.stopPropagation(); // Ngăn việc mở modal khi bấm xóa
+            e.stopPropagation(); 
             onDelete(); 
           }}
         >

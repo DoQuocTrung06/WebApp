@@ -1,203 +1,147 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NoteCard from '../components/NoteCard';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import NotesArea from '../components/NotesArea';
 import RichNoteModal from '../components/RichNoteModal';
 import './Home.css';
 
-import { 
-  MdLightbulbOutline, MdOutlineNotifications, MdOutlineEdit, 
-  MdOutlineArchive, MdOutlineDelete, MdSearch,
-  MdViewAgenda, MdGridView, MdSettings, MdNoteAlt, MdLogout, MdMenu
-} from "react-icons/md";
-
-// Khai báo menu tiếng Việt cho Sidebar
-const SIDEBAR_MENU = [
-  { id: 'notes', label: 'Ghi chú', icon: <MdLightbulbOutline /> },
-  { id: 'reminders', label: 'Lời nhắc', icon: <MdOutlineNotifications /> },
-  { id: 'labels', label: 'Chỉnh sửa nhãn', icon: <MdOutlineEdit /> },
-  { id: 'archive', label: 'Lưu trữ', icon: <MdOutlineArchive /> },
-  { id: 'trash', label: 'Thùng rác', icon: <MdOutlineDelete /> },
-];
-
 function Home() {
-  const navigate = useNavigate(); 
   const [activeTab, setActiveTab] = useState('notes');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isPrefOpen, setIsPrefOpen] = useState(false); // Trạng thái mở menu bánh răng
+  const [isPrefOpen, setIsPrefOpen] = useState(false); 
   const [isGridView, setIsGridView] = useState(true);
   const [theme, setTheme] = useState('light'); 
-  const [fontSize, setFontSize] = useState('medium');
+  const [fontSize, setFontSize] = useState('medium'); 
   const [searchQuery, setSearchQuery] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+  
   const [notes, setNotes] = useState([
-    { id: 1, title: 'Chào mừng!', content: 'Bắt đầu ghi chú ngay thôi.', isPinned: true, bgColor: 'default' },
+    { id: 1, title: 'Chào mừng!', content: 'Bắt đầu ghi chú ngay thôi.', isPinned: true, bgColor: 'default', isArchived: false, isTrashed: false, reminder: null },
   ]);
 
   const handleSaveNote = (noteData) => {
     if (noteData.id) {
       setNotes(prev => prev.map(n => n.id === noteData.id ? noteData : n));
     } else {
-      setNotes(prev => [{ ...noteData, id: Date.now() }, ...prev]);
+      setNotes(prev => [{ ...noteData, id: Date.now(), isArchived: false, isTrashed: false }, ...prev]);
     }
   };
 
   const handleDeleteNote = (id) => {
-    if (window.confirm("Xác nhận xóa ghi chú này?")) {
-      setNotes(prev => prev.filter(note => note.id !== id));
+    // Tìm xem ghi chú được click là ghi chú nào
+    const noteToDelete = notes.find(n => n.id === id);
+
+    if (noteToDelete.isTrashed) {
+      // TRƯỜNG HỢP 1: NẾU ĐÃ Ở TRONG THÙNG RÁC -> XÓA VĨNH VIỄN
+      if (window.confirm("Xóa vĩnh viễn ghi chú này? Bạn sẽ không thể khôi phục lại.")) {
+        setNotes(prev => prev.filter(note => note.id !== id));
+        showToast("Đã xóa ghi chú vĩnh viễn");
+      }
+    } else {
+      // TRƯỜNG HỢP 2: NẾU Ở NGOÀI TRANG CHỦ -> ĐƯA VÀO THÙNG RÁC (XÓA MỀM)
+      setNotes(prev => prev.map(n => 
+        n.id === id ? { ...n, isPinned: false, isTrashed: true } : n
+      ));
+      showToast("Đã chuyển ghi chú vào thùng rác");
     }
   };
 
-  const filteredNotes = notes.filter(n => 
+  const handleRestoreNote = (id) => {
+    setNotes(prev => prev.map(n => 
+      n.id === id ? { ...n, isTrashed: false } : n
+    ));
+    showToast("Đã phục hồi ghi chú");
+    setIsModalOpen(false); // Đóng modal sau khi phục hồi
+  };
+
+  // Hàm phụ trợ để hiển thị thông báo trong 3 giây rồi tự tắt
+  const showToast = (message) => {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage('');
+    }, 3000);
+  };
+
+  // 1. Lọc theo Menu Sidebar
+  const notesByTab = notes.filter(n => {
+    if (activeTab === 'notes') return !n.isArchived && !n.isTrashed;
+    if (activeTab === 'archive') return n.isArchived && !n.isTrashed;
+    if (activeTab === 'reminders') return n.reminder && !n.isArchived && !n.isTrashed;
+    if (activeTab === 'trash') return n.isTrashed;
+    return true;
+  });
+
+  // 2. Lọc theo thanh Tìm kiếm
+  const searchedNotes = notesByTab.filter(n => 
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     n.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const pinnedNotes = filteredNotes.filter(n => n.isPinned);
-  const otherNotes = filteredNotes.filter(n => !n.isPinned);
-
-  const bgStyle = theme === 'dark' ? '#111827' : '#f9fafb';
-  const textColor = theme === 'dark' ? '#f3f4f6' : '#1f2937';
+  const pinnedNotes = searchedNotes.filter(n => n.isPinned);
+  const otherNotes = searchedNotes.filter(n => !n.isPinned);
 
   return (
-    <div className={`d-flex ${theme === 'dark' ? 'dark' : ''}`} 
-         style={{ height: '100vh', overflow: 'hidden', backgroundColor: bgStyle, color: textColor, fontSize: fontSize === 'small' ? '14px' : fontSize === 'large' ? '18px' : '16px' }}>
+    <div className={`app-container d-flex ${theme === 'dark' ? 'dark bg-dark' : 'bg-light'}`} 
+         style={{ height: '100vh', overflow: 'hidden', fontSize: fontSize === 'small' ? '14px' : fontSize === 'large' ? '18px' : '16px' }}>
       
-      {/* Overlay cho Mobile */}
       {isMobileMenuOpen && <div className="sidebar-overlay d-md-none" onClick={() => setIsMobileMenuOpen(false)}></div>}
 
-      {/* SIDEBAR - Đã đổi sang tiếng Việt và Icon mới */}
-      <div className={`app-sidebar py-4 px-3 d-flex flex-column border-end ${theme === 'dark' ? 'border-secondary bg-dark' : 'bg-white'} ${isMobileMenuOpen ? 'open' : ''}`} style={{ width: '280px' }}>
-        <div className="d-flex align-items-center mb-5 px-2">
-          <div className="bg-primary text-white rounded p-2 me-3"><MdNoteAlt size={24} /></div>
-          <h4 className="fw-bold mb-0 text-primary">ProNotes</h4>
-        </div>
-
-        {SIDEBAR_MENU.map(item => (
-          <div 
-            key={item.id} 
-            className={`sidebar-item ${activeTab === item.id ? 'active' : ''} ${theme === 'dark' && activeTab !== item.id ? 'text-light' : ''}`} 
-            onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
-          >
-            <span className="sidebar-icon">{item.icon}</span>
-            {item.label}
-          </div>
-        ))}
-        
-        
-      </div>
+      {/* COMPONENT SIDEBAR */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} theme={theme} />
       
-      {/* MAIN CONTENT */}
       <div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0 }}>
         
-        {/* HEADER */}
-        <div className={`p-3 d-flex align-items-center justify-content-between ${theme === 'dark' ? 'bg-dark border-bottom border-secondary' : 'bg-white shadow-sm'}`} style={{ height: '70px', zIndex: 10 }}>
-          <div className="d-flex align-items-center flex-grow-1">
-            <button className={`btn me-2 d-md-none ${theme === 'dark' ? 'text-white' : 'text-dark'}`} onClick={() => setIsMobileMenuOpen(true)}>
-              <MdMenu size={28} />
-            </button>
-            <div className="input-group ms-md-4 search-container" style={{ maxWidth: '600px' }}>
-              <span className={`input-group-text border-0 rounded-start-pill ${theme === 'dark' ? 'bg-secondary text-white' : 'bg-light'}`}><MdSearch size={22}/></span>
-              <input type="text" className={`form-control border-0 rounded-end-pill shadow-none ${theme === 'dark' ? 'bg-secondary text-white' : 'bg-light'}`} placeholder="Tìm kiếm trong ghi chú..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-            </div>
-          </div>
+        {/* COMPONENT HEADER */}
+        <Header 
+          theme={theme} setTheme={setTheme} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen}
+          searchQuery={searchQuery} setSearchQuery={setSearchQuery} isGridView={isGridView} setIsGridView={setIsGridView}
+          isPrefOpen={isPrefOpen} setIsPrefOpen={setIsPrefOpen} fontSize={fontSize} setFontSize={setFontSize}
+        />
 
-          {/* NHÓM NÚT CÀI ĐẶT & CHẾ ĐỘ XEM */}
-          <div className="me-2 d-flex gap-2 position-relative">
-            <button className="btn" onClick={() => setIsGridView(!isGridView)} title="Đổi chế độ xem">
-              {isGridView ? <MdViewAgenda size={22}/> : <MdGridView size={22}/>}
-            </button>
-            
-            {/* NÚT BÁNH RĂNG */}
-            <button className={`btn ${isPrefOpen ? 'text-primary' : ''}`} onClick={() => setIsPrefOpen(!isPrefOpen)} title="Cài đặt">
-              <MdSettings size={22}/>
-            </button>
-
-            {/* DROPDOWN CÀI ĐẶT (Menu bánh răng) */}
-            {isPrefOpen && (
-              <div className="settings-dropdown shadow-lg p-3 animate__animated animate__fadeIn">
-                <h6 className="fw-bold mb-3">Tùy chỉnh hệ thống</h6>
-                
-                <div className="mb-3">
-                  <label className="small fw-bold opacity-75 d-block mb-1">Giao diện</label>
-                  <select className="form-select form-select-sm" value={theme} onChange={(e) => setTheme(e.target.value)}>
-                    <option value="light">Chế độ Sáng</option>
-                    <option value="dark">Chế độ Tối</option>
-                  </select>
-                </div>
-
-                <div className="mb-3">
-                  <label className="small fw-bold opacity-75 d-block mb-1">Cỡ chữ</label>
-                  <div className="btn-group w-100">
-                    {['small', 'medium', 'large'].map(size => (
-                      <button 
-                        key={size}
-                        className={`btn btn-sm btn-outline-primary ${fontSize === size ? 'active' : ''}`}
-                        onClick={() => setFontSize(size)}
-                      >
-                        {size === 'small' ? 'Nhỏ' : size === 'medium' ? 'Vừa' : 'Lớn'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <hr />
-                <button className="btn btn-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2" onClick={() => navigate('/login')}>
-                  <MdLogout /> Đăng xuất
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* PHẦN NỘI DUNG CHÍNH (Đóng Menu cài đặt khi click vào đây) */}
         <div className="flex-grow-1 overflow-auto" onClick={() => setIsPrefOpen(false)}>
-          {/* Ô TẠO GHI CHÚ */}
-          <div className="d-flex justify-content-center mt-4 px-3">
-            <div className={`card shadow-sm quick-create-box px-4 py-3 d-flex flex-row align-items-center border-0 ${theme === 'dark' ? 'bg-dark text-light' : 'bg-white'}`} 
-                 style={{ width: '100%', maxWidth: '600px', cursor: 'text', borderRadius: '12px' }} 
-                 onClick={() => { setSelectedNote(null); setIsModalOpen(true); }}>
-              <span className="text-muted">Ghi chú mới ngay...</span>
-            </div>
-          </div>
-
-          {/* LƯỚI GHI CHÚ */}
-          <div className="p-3 p-md-5 notes-area">
-            {pinnedNotes.length > 0 && (
-              <div className="mb-5">
-                <small className="text-muted fw-bold ms-2 mb-3 d-block">ĐÃ GHIM</small>
-                <div className={isGridView ? "row g-3" : "d-flex flex-column gap-3 mx-auto"} style={!isGridView ? { maxWidth: '700px' } : {}}>
-                  {pinnedNotes.map(n => (
-                    <div className={isGridView ? "col-12 col-sm-6 col-md-4 col-lg-3" : "col-12"} key={n.id}>
-                      <NoteCard note={n} onClick={() => { setSelectedNote(n); setIsModalOpen(true); }} onDelete={() => handleDeleteNote(n.id)} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div>
-               {pinnedNotes.length > 0 && <small className="text-muted fw-bold ms-2 mb-3 d-block">KHÁC</small>}
-              <div className={isGridView ? "row g-3" : "d-flex flex-column gap-3 mx-auto"} style={!isGridView ? { maxWidth: '700px' } : {}}>
-                {otherNotes.map(n => (
-                  <div className={isGridView ? "col-12 col-sm-6 col-md-4 col-lg-3" : "col-12"} key={n.id}>
-                    <NoteCard note={n} onClick={() => { setSelectedNote(n); setIsModalOpen(true); }} onDelete={() => handleDeleteNote(n.id)} />
-                  </div>
-                ))}
+          
+          {/* NÚT TẠO GHI CHÚ CHỈ HIỆN Ở TRANG CHỦ */}
+          {activeTab === 'notes' && (
+            <div className="d-flex justify-content-center mt-4 px-3">
+              <div className={`card shadow-sm quick-create-box px-4 py-3 d-flex flex-row align-items-center border-0 note-bg-default`} 
+                   style={{ width: '100%', maxWidth: '600px', cursor: 'text', borderRadius: '12px' }} 
+                   onClick={() => { setSelectedNote(null); setIsModalOpen(true); }}>
+                <span className="text-muted">Ghi chú mới ngay...</span>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* COMPONENT HIỂN THỊ DANH SÁCH GHI CHÚ (HOẶC BÁO RỖNG) */}
+          <NotesArea 
+            activeTab={activeTab} pinnedNotes={pinnedNotes} otherNotes={otherNotes} isGridView={isGridView} theme={theme}
+            setSelectedNote={setSelectedNote} setIsModalOpen={setIsModalOpen} handleDeleteNote={handleDeleteNote}
+          />
+
         </div>
       </div>
 
       <RichNoteModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        initialData={selectedNote} 
-        onSave={handleSaveNote} 
-        theme={theme} 
+        isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} 
+        initialData={selectedNote} onSave={handleSaveNote} theme={theme} 
       />
+
+      <RichNoteModal 
+        isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} 
+        initialData={selectedNote} onSave={handleSaveNote} theme={theme} 
+      />
+
+      {/* GIAO DIỆN THÔNG BÁO NHỎ Ở GÓC DƯỚI TRÁI */}
+      {toastMessage && (
+        <div 
+          className="position-fixed bottom-0 start-0 m-4 px-4 py-2 bg-dark text-white rounded shadow-lg" 
+          style={{ zIndex: 9999, transition: 'opacity 0.3s ease-in-out' }}
+        >
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
