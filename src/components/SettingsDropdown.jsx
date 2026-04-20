@@ -1,15 +1,11 @@
 import React from 'react';
-import { MdLogout } from "react-icons/md";
-import { useNavigate } from 'react-router-dom';
 
 function SettingsDropdown({ theme, setTheme, fontSize, setFontSize }) {
-  const navigate = useNavigate();
-
   return (
     <div className={`settings-dropdown shadow-lg p-3 animate__animated animate__fadeIn ${theme === 'dark' ? 'bg-dark text-light border-secondary' : 'bg-white'}`}>
       <h6 className="fw-bold mb-3">Tùy chỉnh hệ thống</h6>
       
-      {/* NÚT GẠT SÁNG/TỐI (TOGGLE SWITCH) */}
+      {/* NÚT GẠT SÁNG/TỐI */}
       <div className="mb-4 d-flex align-items-center justify-content-between">
         <label className="small fw-bold opacity-75 mb-0" htmlFor="themeSwitch" style={{ cursor: 'pointer' }}>
           {theme === 'dark' ? 'Chế độ Tối' : 'Chế độ Sáng'}
@@ -41,11 +37,6 @@ function SettingsDropdown({ theme, setTheme, fontSize, setFontSize }) {
           ))}
         </div>
       </div>
-
-      <hr className={theme === 'dark' ? 'border-secondary' : ''} />
-      <button className="btn btn-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2" onClick={() => navigate('/login')}>
-        <MdLogout /> Đăng xuất
-      </button>
     </div>
   );
 }

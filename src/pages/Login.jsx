@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdNoteAlt, MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { MdNoteAlt, MdVisibility, MdVisibilityOff,MdEmail, MdLock } from "react-icons/md";
 import './Auth.css';
 
 function Login() {
@@ -26,24 +26,35 @@ function Login() {
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <input 
-              type="email" 
-              className="form-control form-control-pro" 
-              placeholder="Email của bạn"
-              required
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-            />
+            <div className="position-relative">
+              {/* ICON TRÁI */}
+              <MdEmail className="input-icon-left" size={20} />
+
+              <input 
+                type="email" 
+                className="form-control form-control-pro ps-5" 
+                placeholder="Email của bạn"
+                required
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
           </div>
 
           <div className="mb-2">
             <div className="position-relative">
+              
+              {/* ICON TRÁI */}
+              <MdLock className="input-icon-left" size={20} />
+
               <input 
                 type={showPassword ? "text" : "password"} 
-                className="form-control form-control-pro input-password-pro" 
+                className="form-control form-control-pro ps-5 pe-5" 
                 placeholder="Mật khẩu"
                 required
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
               />
+
+              {/* ICON MẮT */}
               <button 
                 type="button" 
                 className="password-toggle-btn shadow-none"

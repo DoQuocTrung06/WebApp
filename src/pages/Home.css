@@ -45,7 +45,7 @@
 }
 
 .dark .form-check-input:checked {
-  background-color: #8ab4f8; /* Màu xanh dương nhạt chuẩn Google */
+  background-color: #8ab4f8; 
   border-color: #8ab4f8;
 }
 
@@ -141,17 +141,17 @@
   font-size: 0.95rem;
 }
 
-/* Hover chế độ sáng */
+
 .custom-dropdown-item:hover {
   background-color: #f1f3f4;
 }
 
-/* Hover chế độ tối */
+
 .dark .custom-dropdown-item:hover {
-  background-color: #4a4d51; /* Màu xám sáng hơn nền một chút để dễ nhìn */
+  background-color: #4a4d51; 
 }
 
-/* Fix icon lịch (calendar icon) màu trắng trong Dark Mode cho dễ thấy */
+
 .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
@@ -213,22 +213,66 @@
 }
 
 .rich-editor-content h1 {
-  font-size: 1.5rem !important; /* Khoảng 24px - Vừa vặn cho tiêu đề chính */
+  font-size: 1.5rem !important; 
   font-weight: bold;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
 .rich-editor-content h2 {
-  font-size: 1.25rem !important; /* Khoảng 20px - Tiêu đề phụ */
+  font-size: 1.25rem !important; 
   font-weight: bold;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
 .rich-editor-content h3 {
-  font-size: 1.1rem !important; /* Khoảng 17.6px - Nhỉnh hơn chữ thường một chút */
+  font-size: 1.1rem !important; 
   font-weight: bold;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.account-hover-item {
+  transition: background-color 0.2s ease;
+}
+
+/* Cho Dark Mode */
+.bg-dark .account-hover-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+
+.bg-light .account-hover-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+}
+
+
+.input-icon-left {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #9ca3af; 
+  pointer-events: none;
+}
+
+
+.form-control-pro {
+  padding-left: 40px;
+}
+
+/* icon con mắt bên phải */
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }

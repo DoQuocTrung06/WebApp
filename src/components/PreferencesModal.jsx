@@ -22,12 +22,12 @@ function PreferencesModal({ isOpen, onClose, theme, setTheme, fontSize, setFontS
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
               >
-                <option value="light">☀️ Giao diện Sáng (Light)</option>
-                <option value="dark">🌙 Giao diện Tối (Dark)</option>
+                <option value="light">Giao diện Sáng (Light)</option>
+                <option value="dark">Giao diện Tối (Dark)</option>
               </select>
             </div>
 
-            {/* Cài đặt Cỡ chữ */}
+            
             <div className="mb-3">
               <label className="fw-bold mb-2">Cỡ chữ hiển thị</label>
               <select 

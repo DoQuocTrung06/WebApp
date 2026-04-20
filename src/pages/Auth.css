@@ -1,10 +1,9 @@
-/* src/pages/Auth.css */
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6; /* Nền xám nhạt */
+  background-color: #f3f4f6; 
   background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), 
                     radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
 }
@@ -101,7 +100,7 @@
   text-decoration: underline;
 }
 
-/* Thêm vào cuối file Auth.css */
+
 .password-toggle-btn {
   position: absolute;
   right: 12px;
@@ -127,7 +126,7 @@
 }
 
 .btn-login-main {
-  background-color: #0866ff; /* Màu xanh đặc trưng */
+  background-color: #0866ff; 
   color: white;
   border-radius: 8px;
   font-weight: bold;
@@ -145,8 +144,8 @@
 }
 
 .btn-forgot-pass {
-  background-color: #f0f2f5; /* Nền xám nhạt */
-  color: #1c1e21; /* Chữ xám đậm */
+  background-color: #f0f2f5; 
+  color: #1c1e21; 
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.95rem;
