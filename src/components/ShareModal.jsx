@@ -11,7 +11,7 @@ function ShareModal({ note, onClose, onCloseAll, onSave }) {
   const [emailInput, setEmailInput] = useState('');
   
   // Lấy email chủ sở hữu (Giả lập). Sau này Backend sẽ trả về trong note.owner
-  const ownerEmail = note?.owner || 'huunhan15032004@gmail.com';
+  const ownerEmail = note?.owner || 'doquoctrung2k@gmail.com';
 
   // Khởi tạo danh sách từ dữ liệu của Ghi chú (nếu click lại icon thì nó vẫn còn)
   const [collaborators, setCollaborators] = useState(note?.collaborators || []);
