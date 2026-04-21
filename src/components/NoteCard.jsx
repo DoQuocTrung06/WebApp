@@ -2,13 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MdPushPin, MdOutlinePushPin, MdArchive, MdMoreVert, 
   MdOutlineNotifications, MdPalette, MdImage, MdAccessTime,
-  MdRestore, MdDeleteForever
+  MdRestore, MdDeleteForever,
+  MdPersonAdd
 } from "react-icons/md";
 
 // Import các Menu y hệt như bên RichNoteModal
 import LabelMenu from "./RichNoteModal/LabelMenu";
 import ColorMenu from "./RichNoteModal/ColorMenu";
 import ReminderMenu from "./RichNoteModal/ReminderMenu";
+import ShareModal from "./ShareModal";
 
 function NoteCard({ 
   note, onClick, onDelete, onArchive, theme, 
@@ -23,6 +25,9 @@ function NoteCard({
   // State tạm cho ReminderMenu
   const [tempDate, setTempDate] = useState('');
   const [tempTime, setTempTime] = useState('08:00');
+
+  // [CẬP NHẬT TÍNH NĂNG SHARE] State quản lý việc mở/đóng Modal Share
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -68,12 +73,15 @@ function NoteCard({
   };
 
   return (
+    <>
     <div 
       className={`card h-100 border-0 shadow-sm note-card position-relative note-bg-${note.bgColor || 'default'} ${isDark && (!note.bgColor || note.bgColor === 'default') ? 'bg-secondary text-light' : 'text-dark'}`} 
-      onClick={onClick}
+      onClick={(e) => {
+        if (!activeMenu) onClick(e);
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); setActiveMenu(null); }}
-      style={{ borderRadius: '12px', transition: 'all 0.2s ease-in-out', cursor: 'pointer', userSelect: 'none' }}
+      style={{ borderRadius: '12px', transition: 'all 0.2s ease-in-out', cursor: 'pointer', userSelect: 'none',overflow: activeMenu ? 'visible' : 'hidden' }}
     >
       {/* ẢNH BÌA */}
       {note.image && (
@@ -105,19 +113,40 @@ function NoteCard({
           dangerouslySetInnerHTML={{ __html: note.content || '...' }}
         />
 
-        {/* HIỂN THỊ LỜI NHẮC & NHÃN */}
-        <div className="d-flex flex-wrap gap-1 mb-2">
+        {/* PHẦN HIỂN THỊ LỜI NHẮC, NHÃN & AVATAR (Gom chung 1 chỗ) */}
+        <div className="d-flex flex-wrap align-items-center gap-1 mb-2">
+          {/* 1. Lời nhắc */}
           {note.reminder && (
             <span className={`badge rounded-pill fw-normal d-flex align-items-center gap-1 border ${isDark ? 'bg-dark text-white' : 'bg-light text-dark'}`} style={{ fontSize: '11px', padding: '4px 8px' }}>
               <MdAccessTime size={12} className="text-primary" />
-              
-              {new Date(note.reminder).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} - {new Date(note.reminder).toLocaleDateString('vi-VN')}
+              {new Date(note.reminder).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
+
+          {/* 2. Nhãn */}
           {note.labels && note.labels.map(lbl => (
             <span key={lbl} className={`badge rounded-pill fw-normal border ${isDark ? 'bg-dark text-light' : 'bg-light text-dark'}`} style={{ fontSize: '11px', padding: '4px 8px' }}>
               {lbl}
             </span>
+          ))}
+
+          {/* 3. Avatar (Đưa từ Footer lên đây) */}
+          {note.collaborators && note.collaborators.map((email, index) => (
+            <div 
+              key={index} 
+              title={email} 
+              style={{
+                width: '24px', height: '24px', borderRadius: '50%',
+                backgroundColor: '#fbbc04', color: 'white',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '11px', fontWeight: 'bold', 
+                border: '1.5px solid white',
+                marginLeft: index === 0 ? '4px' : '-6px', 
+                boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+              }}
+            >
+              {email.charAt(0).toUpperCase()}
+            </div>
           ))}
         </div>
 
@@ -148,32 +177,44 @@ function NoteCard({
             </div>
           ) : (
             <>
-              <div />
               <div 
-                className="d-flex align-items-center gap-1 position-relative" 
+                className="d-flex justify-content-between align-items-center w-100 position-relative" 
                 ref={menuRef}
                 onClick={e => e.stopPropagation()}
-                style={{ opacity: isHovered || activeMenu ? 1 : 0, transition: 'opacity 0.2s' }} 
+                style={{ opacity: isHovered || activeMenu ? 1 : 0, transition: 'opacity 0.2s', padding: '0 4px' }} 
               >
                 {/* Lời nhắc */}
+                <div className="position-relative">
                 <button className={`btn btn-sm rounded-circle p-1 border-0 ${activeMenu === 'reminders' ? 'bg-light text-dark' : (isDark ? 'text-light' : 'text-dark')}`} onClick={(e) => toggleMenu(e, 'reminders')} title="Nhắc tôi">
                   <MdOutlineNotifications size={18} />
                 </button>
                 {activeMenu === 'reminders' && (
-                  <div className="position-absolute" style={{ bottom: '100%', left: '-50px', zIndex: 1300, marginBottom: '8px' }}>
+                  <div className="position-absolute" style={{ bottom: '100%', left: '0', zIndex: 1300, marginBottom: '8px' }}>
                     <ReminderMenu theme={theme} tempDate={tempDate} setTempDate={setTempDate} tempTime={tempTime} setTempTime={setTempTime} handleSaveCustomReminder={handleSaveCustomReminder} setReminderDate={setReminderDate} />
                   </div>
                 )}
+              </div>
+
+                {/* [CẬP NHẬT TÍNH NĂNG SHARE] Nút Cộng tác viên */}
+                <button 
+                  className={`btn btn-sm rounded-circle p-1 border-0 ${isDark ? 'text-light' : 'text-dark'}`} 
+                  onClick={(e) => { e.stopPropagation(); setShowShareModal(true); }} 
+                  title="Cộng tác viên"
+                >
+                  <MdPersonAdd size={18} />
+                </button>
 
                 {/* Đổi màu */}
-                <button className={`btn btn-sm rounded-circle p-1 border-0 ${activeMenu === 'colors' ? 'bg-light text-dark' : (isDark ? 'text-light' : 'text-dark')}`} onClick={(e) => toggleMenu(e, 'colors')} title="Tùy chọn nền">
-                  <MdPalette size={18} />
-                </button>
-                {activeMenu === 'colors' && (
-                  <div className="position-absolute" style={{ bottom: '100%', left: '-50px', zIndex: 1300, marginBottom: '8px' }}>
-                    <ColorMenu theme={theme} bgColor={note.bgColor || 'default'} setBgColor={(color) => handleUpdate({ bgColor: color })} onClose={() => setActiveMenu(null)} />
-                  </div>
-                )}
+                <div className="position-relative">
+                  <button className={`btn btn-sm rounded-circle p-1 border-0 ${activeMenu === 'colors' ? 'bg-light text-dark' : (isDark ? 'text-light' : 'text-dark')}`} onClick={(e) => toggleMenu(e, 'colors')} title="Tùy chọn nền">
+                    <MdPalette size={18} />
+                  </button>
+                  {activeMenu === 'colors' && (
+                    <div className="position-absolute" style={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', zIndex: 1300, marginBottom: '8px' }}>
+                      <ColorMenu theme={theme} bgColor={note.bgColor || 'default'} setBgColor={(color) => handleUpdate({ bgColor: color })} onClose={() => setActiveMenu(null)} />
+                    </div>
+                  )}
+                </div>
 
                 {/* Thêm ảnh */}
                 <button className={`btn btn-sm rounded-circle p-1 border-0 ${isDark ? 'text-light' : 'text-dark'}`} onClick={() => fileInputRef.current.click()} title="Thêm hình ảnh">
@@ -185,45 +226,94 @@ function NoteCard({
                 <button className={`btn btn-sm rounded-circle p-1 border-0 ${isDark ? 'text-light' : 'text-dark'}`} onClick={(e) => { e.stopPropagation(); if (onArchive) onArchive(); }} title="Lưu trữ">
                   <MdArchive size={18} />
                 </button>
-                
+
                 {/* Nút 3 chấm */}
-                <button className={`btn btn-sm rounded-circle p-1 border-0 ${activeMenu === 'more' || activeMenu === 'labels' ? 'bg-light text-dark' : (isDark ? 'text-light' : 'text-dark')}`} onClick={(e) => toggleMenu(e, 'more')} title="Thêm">
-                  <MdMoreVert size={18} />
-                </button>
+                <div className="position-relative">
+                  <button 
+                    className={`btn btn-sm rounded-circle p-1 border-0 ${activeMenu === 'more' || activeMenu === 'labels' ? 'bg-light text-dark' : (isDark ? 'text-light' : 'text-dark')}`} 
+                    onClick={(e) => toggleMenu(e, 'more')} 
+                    title="Thêm"
+                  >
+                    <MdMoreVert size={18} />
+                  </button>
 
-                {/* Menu 3 chấm (Xóa, Thêm nhãn) */}
-                {activeMenu === 'more' && (
-                  <div className={`position-absolute shadow-sm rounded py-1 ${isDark ? 'bg-dark border border-secondary' : 'bg-white border'}`}
-                       style={{ top: '100%', right: 0, zIndex: 1050, minWidth: '140px', fontSize: '14px', marginBottom: '8px' }}>
-                    <div className={`dropdown-item px-3 py-2 cursor-pointer ${isDark ? 'text-light' : 'text-dark'}`} onClick={(e) => { e.stopPropagation(); onDelete(); setActiveMenu(null); }}>
-                      Xóa ghi chú
-                    </div>
-                    {!note.isTrashed && (
-                      <div className={`dropdown-item px-3 py-2 cursor-pointer ${isDark ? 'text-light' : 'text-dark'}`} onClick={(e) => { e.stopPropagation(); setActiveMenu('labels'); }}>
-                        Thêm nhãn
+                  {/* Menu 3 chấm: Xóa, Thêm nhãn */}
+                  {activeMenu === 'more' && (
+                    <div 
+                      className={`position-absolute shadow-lg rounded py-1 ${isDark ? 'bg-dark border border-secondary text-light' : 'bg-white border text-dark'}`}
+                      style={{ 
+                        bottom: '100%', // Đổi lên bottom để tránh bị lấp bởi cạnh dưới card
+                        right: 0, 
+                        zIndex: 1050, 
+                        minWidth: '140px', 
+                        fontSize: '14px', 
+                        marginBottom: '8px' 
+                      }}
+                    >
+                      <div 
+                        className="dropdown-item px-3 py-2 cursor-pointer hover-bg" 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          onDelete(); 
+                          setActiveMenu(null); 
+                        }}
+                      >
+                        Xóa ghi chú
                       </div>
-                    )}
-                  </div>
-                )}
+                      {!note.isTrashed && (
+                        <div 
+                          className="dropdown-item px-3 py-2 cursor-pointer hover-bg" 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            setActiveMenu('labels'); // Chuyển trạng thái sang mở nhãn
+                          }}
+                        >
+                          Thêm nhãn
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Bảng chọn nhãn */}
-                {activeMenu === 'labels' && (
-                  <div className="position-absolute" style={{ bottom: '100%', right: 0, zIndex: 1300, marginBottom: '8px' }}>
-                    <LabelMenu 
-                      theme={theme} 
-                      availableLabels={availableLabels} 
-                      selectedLabels={note.labels || []} 
-                      setSelectedLabels={(newLabels) => handleUpdate({ labels: newLabels })} 
-                    />
-                  </div>
-                )}
+                  {/* Bảng chọn nhãn (LabelMenu) */}
+                  {activeMenu === 'labels' && (
+                    <div 
+                      className="position-absolute shadow-lg" 
+                      style={{ 
+                        bottom: '100%', 
+                        right: 0, 
+                        zIndex: 1300, 
+                        marginBottom: '8px' 
+                      }}
+                      onClick={(e) => e.stopPropagation()} // Chống đóng menu khi click vào trong
+                    >
+                      <LabelMenu 
+                        theme={theme} 
+                        availableLabels={availableLabels} 
+                        selectedLabels={note.labels || []} 
+                        setSelectedLabels={(newLabels) => handleUpdate({ labels: newLabels })} 
+                        // Thêm nút quay lại nếu cần, hoặc click ra ngoài để đóng
+                      />
+                    </div>
+                  )}
+                </div>
 
               </div>
             </>
           )}
         </div>
-      </div>
+      </div>      
     </div>
+    {showShareModal && (
+      <ShareModal 
+        note={note} 
+        onClose={() => setShowShareModal(false)} 
+        onSave={(newCollaborators) => {
+          handleUpdate({ collaborators: newCollaborators });
+          setShowShareModal(false);
+        }}
+      />
+    )}
+  </> 
   );
 }
 

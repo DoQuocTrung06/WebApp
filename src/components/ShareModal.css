@@ -1,0 +1,210 @@
+/* =========================================
+   1. GIAO DIỆN CHUNG (SÁNG)
+========================================= */
+.share-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+}
+
+.share-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.share-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.share-modal-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.share-modal-body {
+  padding: 10px 0;
+}
+
+.shared-item, .add-collaborator-form {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+/* Avatar chuẩn Google */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.owner-avatar {
+  background-color: #1a73e8; 
+  color: white;
+}
+
+.collab-avatar {
+  background-color: #fbbc04; /* Màu vàng cam */
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.add-avatar {
+  background-color: transparent;
+  color: #5f6368;
+  border: 1px solid #dadce0;
+}
+
+.user-info {
+  flex-grow: 1;
+  font-size: 14px;
+  color: #202124;
+}
+
+.user-role {
+  font-size: 13px;
+}
+
+.btn-remove, .btn-check-add {
+  background: none;
+  border: none;
+  color: #5f6368;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.btn-remove:hover, .btn-check-add:hover {
+  background-color: #f1f3f4;
+}
+
+.add-collaborator-form input {
+  flex-grow: 1;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+}
+
+.add-collaborator-form input::placeholder {
+  color: #5f6368;
+}
+
+.share-modal-footer {
+  padding: 12px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #f1f3f4;
+}
+
+.btn-keep-cancel, .btn-keep-save {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+.btn-keep-cancel {
+  color: #5f6368;
+}
+
+.btn-keep-cancel:hover {
+  background-color: #f1f3f4;
+}
+
+.btn-keep-save {
+  color: #1a73e8; 
+}
+
+.btn-keep-save:hover {
+  background-color: rgba(26, 115, 232, 0.05);
+}
+
+
+/* =========================================
+   2. ĐỒNG BỘ DARK MODE VỚI HOME.CSS CỦA BẠN
+   (Tự động kích hoạt khi có class .dark ở component cha)
+========================================= */
+
+.dark .share-modal-card {
+  background: #2d2e31; /* Dùng chung màu nền với .settings-dropdown của bạn */
+  border-color: #5f6368;
+  color: #e8eaed;
+}
+
+.dark .share-modal-header {
+  border-bottom-color: #5f6368;
+}
+
+.dark .share-modal-header h5, 
+.dark .user-info, 
+.dark .user-email {
+  color: #e8eaed !important;
+}
+
+.dark .add-collaborator-form input {
+  color: #e8eaed !important;
+}
+
+.dark .add-collaborator-form input::placeholder {
+  color: #9aa0a6 !important;
+}
+
+.dark .share-modal-footer {
+  background-color: #202124; /* Nền tối hơn phần thân một chút */
+  border-top-color: #5f6368;
+}
+
+.dark .add-avatar {
+  border-color: #5f6368;
+  color: #bdc1c6;
+}
+
+.dark .btn-remove, 
+.dark .btn-check-add, 
+.dark .btn-keep-cancel {
+  color: #9aa0a6;
+}
+
+/* Hiệu ứng hover trong Dark Mode giống hệt btn-light-hover của bạn */
+.dark .btn-remove:hover, 
+.dark .btn-check-add:hover, 
+.dark .btn-keep-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e8eaed !important;
+}
