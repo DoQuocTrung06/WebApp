@@ -100,7 +100,7 @@ function RichNoteModal({
       labels,
       content, 
       collaborators: collaborators,
-      updatedAt: `Đã chỉnh sửa ${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, '0')}`
+      updatedAt: new Date().toISOString()
     });
 
     onClose();
@@ -246,6 +246,43 @@ function RichNoteModal({
               style={{ minHeight: '150px', outline: 'none' }} 
               onFocus={() => setDisableFormat(false)}
             />
+            {/* BẮT ĐẦU PHẦN THÊM MỚI: Hiển thị thời gian */}
+            {initialData?.updatedAt && !isTrash && (
+              <div className="mt-4 d-flex justify-content-end">
+                <span 
+                  className={`badge rounded-pill fw-normal time-tooltip-wrapper ${theme === 'dark' ? 'text-white text-opacity-75' : 'text-secondary'}`} 
+                  style={{ 
+                    fontSize: '12px', 
+                    padding: '6px 10px', 
+                    transition: 'background-color 0.2s',
+                    backgroundColor: 'transparent'
+                  }} 
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  Đã chỉnh sửa {
+                    !isNaN(new Date(initialData.updatedAt).getTime()) 
+                      ? new Date(initialData.updatedAt).toLocaleDateString('vi-VN', {
+                          day: 'numeric', 
+                          month: 'short' 
+                        })
+                      : initialData.updatedAt
+                  }
+
+                  {/* Hộp thoại Tooltip */}
+                  <div className="time-tooltip">
+                    {initialData?.createdAt && !isNaN(new Date(initialData.createdAt).getTime())
+                      ? `Đã tạo ${new Date(initialData.createdAt).toLocaleDateString('vi-VN', {
+                          day: 'numeric', 
+                          month: 'short',
+                          year: 'numeric'
+                        }).replace(' năm ', ' ')}`
+                      : ''} {/*Neu backend chưa lưu data thì tôi để ví dụ "đã tạo 20 thg 4" */}
+                  </div>
+                </span>
+              </div>
+            )}
+            {/* KẾT THÚC PHẦN THÊM MỚI */}
           </div>
           
           <div className="d-flex align-items-center justify-content-between p-2 px-3 border-top" ref={menuContainerRef}>

@@ -276,3 +276,46 @@
   background: transparent;
   cursor: pointer;
 }
+
+/* --- CUSTOM TOOLTIP HIỂN THỊ THỜI GIAN --- */
+.time-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  cursor: default;
+}
+
+.time-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); /* Luôn giữ hộp thoại ở chính giữa */
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.1s ease-out; /* Tốc độ hiện lên cực nhanh */
+  z-index: 1000;
+  
+  /* Chế độ Sáng (Mặc định) */
+  background-color: #ffffff;
+  color: #202124;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+}
+
+/* Chế độ Tối (Tự động ăn theo class .dark của app-container) */
+.dark .time-tooltip {
+  background-color: #2d2e31;
+  color: #e8eaed;
+  border-color: #5f6368;
+}
+
+/* Hiệu ứng trượt nhẹ khi di chuột */
+.time-tooltip-wrapper:hover .time-tooltip {
+  opacity: 1;
+  visibility: visible;
+  margin-bottom: 2px; 
+}

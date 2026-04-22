@@ -119,7 +119,13 @@ function NoteCard({
           {note.reminder && (
             <span className={`badge rounded-pill fw-normal d-flex align-items-center gap-1 border ${isDark ? 'bg-dark text-white' : 'bg-light text-dark'}`} style={{ fontSize: '11px', padding: '4px 8px' }}>
               <MdAccessTime size={12} className="text-primary" />
-              {new Date(note.reminder).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+              {new Date(note.reminder).toLocaleString('vi-VN', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
             </span>
           )}
 
